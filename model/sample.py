@@ -5,7 +5,7 @@ import torch.nn.functional as F
 import torch.utils.data
 from torch import nn
 
-from utils import gather
+from .utils import gather
 
 
 class DenoiseDiffusion:
@@ -63,7 +63,8 @@ class DenoiseDiffusion:
         # get $q(x_t|x_0)$
         mean, var = self.q_xt_x0(x0, t)
         # Sample from $q(x_t|x_0)$
-        return mean + (var ** 0.5) * eps
+        sample = mean + (var ** 0.5) * eps  # scaled inputs * scaled noise
+        return sample, eps
 
     def p_sample(self, xt: torch.Tensor, t: torch.Tensor):
         """

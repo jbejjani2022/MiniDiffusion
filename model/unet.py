@@ -20,7 +20,7 @@ from typing import Optional, Tuple, Union, List
 import torch
 from torch import nn
 
-from utils import Module
+from .utils import Module
 
 
 class Swish(Module):
@@ -299,12 +299,12 @@ class UNet(Module):
     ## U-Net
     """
 
-    def __init__(self, image_channels: int = 3, n_channels: int = 64,
+    def __init__(self, input_channels: int = 3, n_channels: int = 64,
                  ch_mults: Union[Tuple[int, ...], List[int]] = (1, 2, 2, 4),
                  is_attn: Union[Tuple[bool, ...], List[bool]] = (False, False, True, True),
                  n_blocks: int = 2):
         """
-        * `image_channels` is the number of channels in the image. $3$ for RGB.
+        * `input_channels` is the number of channels in the image. $3$ for RGB.
         * `n_channels` is number of channels in the initial feature map that we transform the image into
         * `ch_mults` is the list of channel numbers at each resolution. The number of channels is `ch_mults[i] * n_channels`
         * `is_attn` is a list of booleans that indicate whether to use attention at each resolution
@@ -316,7 +316,7 @@ class UNet(Module):
         n_resolutions = len(ch_mults)
 
         # Project image into feature map
-        self.image_proj = nn.Conv2d(image_channels, n_channels, kernel_size=(3, 3), padding=(1, 1))
+        self.image_proj = nn.Conv2d(input_channels, n_channels, kernel_size=(3, 3), padding=(1, 1))
 
         # Time embedding layer. Time embedding has `n_channels * 4` channels
         self.time_emb = TimeEmbedding(n_channels * 4)
@@ -367,7 +367,7 @@ class UNet(Module):
         # Final normalization and convolution layer
         self.norm = nn.GroupNorm(8, n_channels)
         self.act = Swish()
-        self.final = nn.Conv2d(in_channels, image_channels, kernel_size=(3, 3), padding=(1, 1))
+        self.final = nn.Conv2d(in_channels, input_channels, kernel_size=(3, 3), padding=(1, 1))
 
     def forward(self, x: torch.Tensor, t: torch.Tensor):
         """

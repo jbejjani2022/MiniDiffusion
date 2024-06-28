@@ -12,7 +12,7 @@ from model.helpers import get_default_device
 loader = get_dataloader(
     dataset_name=BaseConfig.DATASET,
     batch_size=128,
-    device=get_default_device,
+    device=BaseConfig.DEVICE,
 )
 
 plt.figure(figsize=(12, 6), facecolor='white')
