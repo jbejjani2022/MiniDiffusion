@@ -7,7 +7,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from model.configs import BaseConfig
 from model.dataloader import get_dataloader, inverse_transform
-from model.helpers import get_default_device
+
 
 loader = get_dataloader(
     dataset_name=BaseConfig.DATASET,

@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from model.unet import UNet
-from model.configs import BaseConfig, TrainingConfig
-from model.dataloader import get_dataloader, inverse_transform
-from model.helpers import get, frames2vid, setup_log_directory
-from model.sample import DenoiseDiffusion
+from .unet import UNet
+from .configs import BaseConfig, TrainingConfig
+from .dataloader import get_dataloader, inverse_transform
+from .helpers import get, frames2vid, setup_log_directory
+from .diffusion import DenoiseDiffusion
 
 
 def train_one_epoch(model, dd, loader, optimizer, scaler, loss_fn, epoch=800, 
@@ -129,6 +129,12 @@ eps_model = UNet(
 
 eps_model.to(BaseConfig.DEVICE)
 
+dd = DenoiseDiffusion(
+        eps_model=eps_model,
+        n_steps=TrainingConfig.TIMESTEPS,
+        device=BaseConfig.DEVICE
+    )
+
 
 if __name__ == '__main__':
     optimizer = torch.optim.AdamW(eps_model.parameters(), lr=TrainingConfig.LR)
@@ -142,12 +148,6 @@ if __name__ == '__main__':
     )
 
     loss_fn = nn.MSELoss()
-
-    dd = DenoiseDiffusion(
-        eps_model=eps_model,
-        n_steps=TrainingConfig.TIMESTEPS,
-        device=BaseConfig.DEVICE
-    )
 
     scaler = amp.GradScaler()
     

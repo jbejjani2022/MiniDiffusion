@@ -6,9 +6,9 @@ import matplotlib.pyplot as plt
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from train import eps_model
+from model.train import eps_model
 
-from model.sample import DenoiseDiffusion
+from model.diffusion import DenoiseDiffusion
 from model.configs import BaseConfig, TrainingConfig
 from model.dataloader import get_dataloader, inverse_transform
 from model.helpers import get_default_device
