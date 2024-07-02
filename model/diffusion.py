@@ -5,7 +5,8 @@ import torch.nn.functional as F
 import torch.utils.data
 from torch import nn
 
-from .utils import gather
+from utils import gather
+from configs import BaseConfig
 
 
 class DenoiseDiffusion:
@@ -30,6 +31,8 @@ class DenoiseDiffusion:
         self.n_steps = n_steps
         # $\sigma^2 = \beta$
         self.sigma2 = self.beta
+        self.one_by_sqrt_alpha = self.alpha ** (-0.5)
+        self.sqrt_one_minus_alpha_cumulative = (1. - self.alpha_bar) ** 0.5
 
     def q_xt_x0(self, x0: torch.Tensor, t: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
         """
@@ -39,6 +42,9 @@ class DenoiseDiffusion:
         q(x_t|x_0) &= \mathcal{N} \Big(x_t; \sqrt{\bar\alpha_t} x_0, (1-\bar\alpha_t) \mathbf{I} \Big)
         \end{align}
         """
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        x0 = x0.to(device)
+        t = t.to(device)
 
         # [ather $\alpha_t$ and compute $\sqrt{\bar\alpha_t} x_0$
         mean = gather(self.alpha_bar, t) ** 0.5 * x0
@@ -55,7 +61,10 @@ class DenoiseDiffusion:
         q(x_t|x_0) &= \mathcal{N} \Big(x_t; \sqrt{\bar\alpha_t} x_0, (1-\bar\alpha_t) \mathbf{I} \Big)
         \end{align}
         """
-
+        device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        x0 = x0.to(device)
+        t = t.to(device)
+        
         # $\epsilon \sim \mathcal{N}(\mathbf{0}, \mathbf{I})$
         if eps is None:
             eps = torch.randn_like(x0)

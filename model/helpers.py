@@ -29,7 +29,7 @@ class DeviceDataLoader:
         return len(self.dl)
 
 def get_default_device():
-    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    return torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
 def save_images(images, path, **kwargs):
     grid = torchvision.utils.make_grid(images, **kwargs)
@@ -99,6 +99,8 @@ def display_gif(gif_path):
     
 def get_most_recent_version(dir):
     folder_numbers = [int(folder.replace("version_", "")) for folder in os.listdir(dir) if folder.startswith("version_")]
+    if not folder_numbers:
+        return 0
     return max(folder_numbers)
 
 def get(element: torch.Tensor, t: torch.Tensor):

@@ -15,11 +15,11 @@ import matplotlib.pyplot as plt
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
-from .unet import UNet
-from .configs import BaseConfig, TrainingConfig
-from .dataloader import get_dataloader, inverse_transform
-from .helpers import get, frames2vid, setup_log_directory
-from .diffusion import DenoiseDiffusion
+from unet import UNet
+from configs import BaseConfig, TrainingConfig
+from dataloader import get_dataloader, inverse_transform
+from helpers import get, frames2vid, setup_log_directory
+from diffusion import DenoiseDiffusion
 
 
 def train_one_epoch(model, dd, loader, optimizer, scaler, loss_fn, epoch=800, 

@@ -2,10 +2,11 @@ import torch
 import os
 from datetime import datetime
 
-from .configs import BaseConfig, TrainingConfig
-from .train import eps_model, dd, reverse_diffusion
+from configs import BaseConfig, TrainingConfig
+from train import eps_model, dd, reverse_diffusion
 
-eps_model.load_state_dict(torch.load(os.path.join(BaseConfig.checkpoint_dir, "ckpt.tar"), map_location=BaseConfig.DEVICE)['model'])
+checkpoint = torch.load(BaseConfig.checkpoint_dir, map_location=BaseConfig.DEVICE)
+eps_model.load_state_dict(checkpoint['model'])
 eps_model.to(BaseConfig.DEVICE)
 
 log_dir = "inference_results"
@@ -31,3 +32,7 @@ def sample(generate_video=True, num_images=256, timesteps=1000, nrow=32):
     )
     
     print(save_path)
+
+
+if __name__ == '__main__':
+    sample()

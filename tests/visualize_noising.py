@@ -11,7 +11,6 @@ from model.train import eps_model
 from model.diffusion import DenoiseDiffusion
 from model.configs import BaseConfig, TrainingConfig
 from model.dataloader import get_dataloader, inverse_transform
-from model.helpers import get_default_device
 
 
 dd = DenoiseDiffusion(eps_model=eps_model, n_steps=TrainingConfig.TIMESTEPS, device=BaseConfig.DEVICE)

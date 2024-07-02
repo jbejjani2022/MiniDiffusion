@@ -1,5 +1,16 @@
 # Data files
 tests/data
+model/data
+
+# Checkpoints/versions
+# model/Log/Inference/*
+# model/Log/Inference/**/
+# !model/Log/Inference/.gitignore
+# model/Log/checkpoints/*
+# model/Log/checkpoints/**/
+# !model/Log/checkpoints/.gitignore
+model/Log-CIFAR10/
+model/Log
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

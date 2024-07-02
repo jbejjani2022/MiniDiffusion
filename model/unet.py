@@ -20,7 +20,7 @@ from typing import Optional, Tuple, Union, List
 import torch
 from torch import nn
 
-from .utils import Module
+from utils import Module
 
 
 class Swish(Module):

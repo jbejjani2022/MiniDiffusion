@@ -3,11 +3,15 @@ from typing import Any, TypeVar, Iterator, Iterable, Generic
 import torch.nn
 import torch.utils.data
 
+from configs import BaseConfig
+
 
 def gather(consts: torch.Tensor, t: torch.Tensor):
     """Gather consts for $t$ and reshape to feature map shape"""
     c = consts.gather(-1, t)
-    return c.reshape(-1, 1, 1, 1)
+    c = c.reshape(-1, 1, 1, 1)
+    c.to(BaseConfig.DEVICE)
+    return c
 
 
 class Module(torch.nn.Module):
