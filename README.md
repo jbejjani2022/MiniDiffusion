@@ -15,5 +15,8 @@ learned distribution to generate new images.
 diffusion process, as well as generating new images with `generate.py`.
 
 Here are some snapshots taken during experimentation:
-![CIFAR10 Data Sample](tests/cifar10_data.png)
-![Forward Diffusion Process](tests/forward_diffusion_process.png)
+![CIFAR10 Data Sample](tests/CIFAR-10/cifar10_data.png)
+![Forward Diffusion Process](tests/CIFAR-10/forward_diffusion_process.png)
+
+![MNIST Data Sample](tests/MNIST/mnist_data.png)
+![Forward Diffusion Process](tests/MNIST/forward_diffusion_process.png)
