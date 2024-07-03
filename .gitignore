@@ -2,6 +2,11 @@
 tests/data
 model/data
 
+# runscript file and outputs
+model/runscript.sh
+model/*.err
+model/*.out
+
 # Checkpoints/versions
 # model/Log/Inference/*
 # model/Log/Inference/**/
@@ -11,6 +16,7 @@ model/data
 # !model/Log/checkpoints/.gitignore
 model/Log-CIFAR10/
 model/Log
+inference_results/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
