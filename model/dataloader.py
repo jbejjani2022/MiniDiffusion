@@ -15,7 +15,7 @@ def get_dataset(dataset_name='BaseConfig.DATASET'):
             TF.Resize((32, 32),
                       interpolation=TF.InterpolationMode.BICUBIC,
                       antialias=True),
-            TF.RandomHorizontalFlip(),
+            # TF.RandomHorizontalFlip(),
             TF.Lambda(lam_func)
         ]
     )

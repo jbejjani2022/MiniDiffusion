@@ -19,10 +19,10 @@ from unet import UNet
 from configs import BaseConfig, TrainingConfig
 from dataloader import get_dataloader, inverse_transform
 from helpers import get, frames2vid, setup_log_directory
-from diffusion import DenoiseDiffusion
+from diffusion import SimpleDiffusion, forward_diffusion
 
 
-def train_one_epoch(model, dd, loader, optimizer, scaler, loss_fn, epoch=800, 
+def train_one_epoch(model, sd, loader, optimizer, scaler, loss_fn, epoch=800, 
                    base_config=BaseConfig(), training_config=TrainingConfig()):
     
     loss_record = MeanMetric()
@@ -35,7 +35,7 @@ def train_one_epoch(model, dd, loader, optimizer, scaler, loss_fn, epoch=800,
             tq.update(1)
             
             ts = torch.randint(low=1, high=training_config.TIMESTEPS, size=(x0s.shape[0],), device=base_config.DEVICE)
-            xts, gt_noise = dd.q_sample(x0s, ts)
+            xts, gt_noise = forward_diffusion(sd, x0s, ts)
 
             with amp.autocast():
                 pred_noise = model(xts, ts)
@@ -63,7 +63,7 @@ def train_one_epoch(model, dd, loader, optimizer, scaler, loss_fn, epoch=800,
 
 
 @torch.inference_mode()
-def reverse_diffusion(model, dd, timesteps=1000, img_shape=(3, 64, 64), 
+def reverse_diffusion(model, sd, timesteps=TrainingConfig.TIMESTEPS, img_shape=(3, 64, 64), 
                       num_images=5, nrow=8, device=BaseConfig.DEVICE, **kwargs):
 
     x = torch.randn((num_images, *img_shape), device=device)
@@ -83,9 +83,9 @@ def reverse_diffusion(model, dd, timesteps=1000, img_shape=(3, 64, 64),
 
         predicted_noise = model(x, ts)
 
-        beta_t                            = get(dd.beta, ts)
-        one_by_sqrt_alpha_t               = get(dd.one_by_sqrt_alpha, ts)
-        sqrt_one_minus_alpha_cumulative_t = get(dd.sqrt_one_minus_alpha_cumulative, ts) 
+        beta_t                            = get(sd.beta, ts)
+        one_by_sqrt_alpha_t               = get(sd.one_by_sqrt_alpha, ts)
+        sqrt_one_minus_alpha_cumulative_t = get(sd.sqrt_one_minus_alpha_cumulative, ts) 
 
         x = (
             one_by_sqrt_alpha_t
@@ -113,27 +113,31 @@ def reverse_diffusion(model, dd, timesteps=1000, img_shape=(3, 64, 64),
         return None
 
 
+@dataclass
 class ModelConfig:
-    N_CH = 64
-    BASE_CH_MULT = (1, 2, 4, 4)
-    APPLY_ATTENTION = (False, False, True, True)
-    N_BLOCKS = 2
+    BASE_CH = 64  # 64, 128, 256, 512
+    BASE_CH_MULT = (1, 2, 4, 8) # 32, 16, 8, 4 
+    APPLY_ATTENTION = (False, False, True, False)
+    DROPOUT_RATE = 0.1
+    TIME_EMB_MULT = 2 # 128
 
 eps_model = UNet(
-    input_channels = TrainingConfig.IMG_SHAPE[0],
-    n_channels = ModelConfig.N_CH,
-    ch_mults = ModelConfig.BASE_CH_MULT,
-    is_attn = ModelConfig.APPLY_ATTENTION,
-    n_blocks = ModelConfig.N_BLOCKS
+    input_channels          = TrainingConfig.IMG_SHAPE[0],
+    output_channels         = TrainingConfig.IMG_SHAPE[0],
+    base_channels           = ModelConfig.BASE_CH,
+    base_channels_multiples = ModelConfig.BASE_CH_MULT,
+    apply_attention         = ModelConfig.APPLY_ATTENTION,
+    dropout_rate            = ModelConfig.DROPOUT_RATE,
+    time_multiple           = ModelConfig.TIME_EMB_MULT,
 )
 
 eps_model.to(BaseConfig.DEVICE)
 
-dd = DenoiseDiffusion(
-        eps_model=eps_model,
-        n_steps=TrainingConfig.TIMESTEPS,
-        device=BaseConfig.DEVICE
-    )
+sd = SimpleDiffusion(
+    num_diffusion_timesteps = TrainingConfig.TIMESTEPS,
+    img_shape               = TrainingConfig.IMG_SHAPE,
+    device                  = BaseConfig.DEVICE,
+)
 
 
 if __name__ == '__main__':
@@ -163,13 +167,13 @@ if __name__ == '__main__':
         gc.collect()
 
         # Algorithm 1: Training
-        train_one_epoch(eps_model, dd, dataloader, optimizer, scaler, loss_fn, epoch=epoch)
+        train_one_epoch(eps_model, sd, dataloader, optimizer, scaler, loss_fn, epoch=epoch)
 
         if epoch % 5 == 0:
             save_path = os.path.join(log_dir, f"{epoch}{ext}")
 
             # Sample
-            reverse_diffusion(eps_model, dd, timesteps=TrainingConfig.TIMESTEPS, num_images=32, generate_video=generate_video,
+            reverse_diffusion(eps_model, sd, timesteps=TrainingConfig.TIMESTEPS, num_images=32, generate_video=generate_video,
                 save_path=save_path, img_shape=TrainingConfig.IMG_SHAPE, device=BaseConfig.DEVICE,
             )
 

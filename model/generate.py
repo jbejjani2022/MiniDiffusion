@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 from configs import BaseConfig, TrainingConfig
-from train import eps_model, dd, reverse_diffusion
+from train import eps_model, sd, reverse_diffusion
 
 checkpoint = torch.load(BaseConfig.checkpoint_dir, map_location=BaseConfig.DEVICE)
 eps_model.load_state_dict(checkpoint['model'])
@@ -21,7 +21,7 @@ def sample(generate_video=True, num_images=256, timesteps=1000, nrow=32):
     
     reverse_diffusion(
         eps_model,
-        dd,
+        sd,
         num_images=num_images,
         generate_video=generate_video,
         save_path=save_path,

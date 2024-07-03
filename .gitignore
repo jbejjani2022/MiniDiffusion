@@ -16,6 +16,7 @@ model/*.out
 # !model/Log/checkpoints/.gitignore
 model/Log-CIFAR10/
 model/Log
+model/Log2
 inference_results/
 
 # Byte-compiled / optimized / DLL files

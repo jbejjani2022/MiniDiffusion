@@ -23,4 +23,4 @@ for b_image, _ in loader:
     plt.imshow(grid_img.permute(1, 2, 0))
     plt.axis("off")
     
-plt.show()
+plt.savefig("data.png")
