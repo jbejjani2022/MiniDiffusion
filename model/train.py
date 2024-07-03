@@ -12,6 +12,7 @@ from torchvision.utils import make_grid
 from torch.cuda import amp
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+from dataclasses import dataclass
 
 sys.path.append(str(Path(__file__).resolve().parent.parent))
 
