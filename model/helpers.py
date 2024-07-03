@@ -53,7 +53,10 @@ def setup_log_directory(config):
         folder_numbers = [int(folder.replace("version_", "")) for folder in os.listdir(config.root_log_dir)]
         
         # Find the latest version number present in the log_dir
-        last_version_number = max(folder_numbers)
+        if not folder_numbers:
+            last_version_number = 0
+        else:
+            last_version_number = max(folder_numbers)
 
         # New version name
         version_name = f"version_{last_version_number + 1}"
