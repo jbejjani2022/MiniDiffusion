@@ -14,12 +14,10 @@ model/*.out
 # model/Log/checkpoints/*
 # model/Log/checkpoints/**/
 # !model/Log/checkpoints/.gitignore
-model/Log-v1-CIFAR10
 model/Log
 model/Log2
-model/Log-v2-MNIST
-model/Log-v2-CIFAR10
 model/generated_samples
+model/Logs
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
