@@ -1,4 +1,3 @@
-import sys
 import os
 import gc
 from pathlib import Path
@@ -12,8 +11,6 @@ from torchvision.utils import make_grid
 from torch.cuda import amp
 from tqdm import tqdm
 import matplotlib.pyplot as plt
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from unet import UNet
 from configs import BaseConfig, TrainingConfig

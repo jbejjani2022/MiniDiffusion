@@ -1,9 +1,6 @@
-import sys
 from pathlib import Path
 from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from model.configs import BaseConfig
 from model.dataloader import get_dataloader, inverse_transform
