@@ -1,7 +1,5 @@
-import sys
 import os
 import gc
-from pathlib import Path
 import torch
 import torch.nn as nn
 from PIL import Image
@@ -13,8 +11,6 @@ from torch.cuda import amp
 from tqdm import tqdm
 import matplotlib.pyplot as plt
 from dataclasses import dataclass
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from unet import UNet
 from configs import BaseConfig, TrainingConfig

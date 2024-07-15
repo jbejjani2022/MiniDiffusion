@@ -1,10 +1,6 @@
-import sys
-from pathlib import Path
 import torch
 from torchvision.utils import make_grid
 import matplotlib.pyplot as plt
-
-sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from model.diffusion import SimpleDiffusion, forward_diffusion
 from model.configs import BaseConfig, TrainingConfig
